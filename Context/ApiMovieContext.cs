@@ -18,9 +18,9 @@ public partial class ApiMovieContext : DbContext
 
     public virtual DbSet<Film> Films { get; set; }
 
-    public virtual DbSet<Personne> Personnes { get; set; }
+    public virtual DbSet<FilmPersonne> FilmPersonnes { get; set; }
 
-    public virtual DbSet<Role> Roles { get; set; }
+    public virtual DbSet<Personne> Personnes { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -44,6 +44,37 @@ public partial class ApiMovieContext : DbContext
             entity.Property(e => e.Nom).HasMaxLength(128);
         });
 
+        modelBuilder.Entity<FilmPersonne>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToTable("film_personne");
+
+            entity.HasIndex(e => e.FilmId, "film_id");
+
+            entity.HasIndex(e => e.PersonneId, "personne_id");
+
+            entity.Property(e => e.FilmId)
+                .HasColumnType("int(11)")
+                .HasColumnName("film_id");
+            entity.Property(e => e.PersonneId)
+                .HasColumnType("int(11)")
+                .HasColumnName("personne_id");
+            entity.Property(e => e.Role)
+                .HasMaxLength(10)
+                .HasColumnName("role");
+
+            entity.HasOne(d => d.Film).WithMany()
+                .HasForeignKey(d => d.FilmId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("film_personne_ibfk_2");
+
+            entity.HasOne(d => d.Personne).WithMany()
+                .HasForeignKey(d => d.PersonneId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("film_personne_ibfk_1");
+        });
+
         modelBuilder.Entity<Personne>(entity =>
         {
             entity.HasKey(e => e.PersonneId).HasName("PRIMARY");
@@ -60,37 +91,6 @@ public partial class ApiMovieContext : DbContext
             entity.Property(e => e.Prenom)
                 .HasMaxLength(10)
                 .HasColumnName("prenom");
-        });
-
-        modelBuilder.Entity<Role>(entity =>
-        {
-            entity
-                .HasNoKey()
-                .ToTable("role");
-
-            entity.HasIndex(e => e.FilmId, "film_id");
-
-            entity.HasIndex(e => e.PersonneId, "personne_id");
-
-            entity.Property(e => e.FilmId)
-                .HasColumnType("int(11)")
-                .HasColumnName("film_id");
-            entity.Property(e => e.PersonneId)
-                .HasColumnType("int(11)")
-                .HasColumnName("personne_id");
-            entity.Property(e => e.Role1)
-                .HasMaxLength(10)
-                .HasColumnName("role");
-
-            entity.HasOne(d => d.Film).WithMany()
-                .HasForeignKey(d => d.FilmId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("role_ibfk_2");
-
-            entity.HasOne(d => d.Personne).WithMany()
-                .HasForeignKey(d => d.PersonneId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("role_ibfk_1");
         });
 
         OnModelCreatingPartial(modelBuilder);
