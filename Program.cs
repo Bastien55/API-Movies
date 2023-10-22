@@ -2,6 +2,8 @@ using API_Movies.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using API_Movies;
+using API_Movies.Repository.Interface;
+using API_Movies.Repository;
 
 internal class Program
 {
@@ -21,11 +23,14 @@ internal class Program
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.
-        if (app.Environment.IsDevelopment())
-        {
-            app.UseSwagger();
-            app.UseSwaggerUI();
-        }
+        //if (app.Environment.IsDevelopment())
+        //{
+        //    app.UseSwagger();
+        //    app.UseSwaggerUI();
+        //}
+
+        app.UseSwagger();
+        app.UseSwaggerUI();
 
         app.UseHttpsRedirection();
 
@@ -38,19 +43,13 @@ internal class Program
 
     public static void ConfigureServices(IServiceCollection services)
     {
-        // Replace with your connection string.
         var config = new ConfigurationBuilder()
             .SetBasePath(System.IO.Directory.GetCurrentDirectory())
             .AddJsonFile("appsettings.json")
             .Build();
 
-        // Replace with your server version and type.
-        // Use 'MariaDbServerVersion' for MariaDB.
-        // Alternatively, use 'ServerVersion.AutoDetect(connectionString)'.
-        // For common usages, see pull request #1233.
         var serverVersion = new MariaDbServerVersion(new Version(11, 1, 2));
 
-        // Replace 'YourDbContext' with the name of your own DbContext derived class.
         services.AddDbContext<ApiMovieContext>(
             dbContextOptions => dbContextOptions
                 .UseMySql(config.GetConnectionString("MoviesDatabase"), serverVersion)
