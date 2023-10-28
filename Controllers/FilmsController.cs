@@ -10,6 +10,7 @@ using API_Movies.Models;
 using System.Collections;
 using Microsoft.EntityFrameworkCore.Query;
 using MySqlConnector;
+using API_Movies.Models.DTO;
 
 namespace API_Movies.Controllers
 {
@@ -33,7 +34,39 @@ namespace API_Movies.Controllers
             {
                 return NotFound();
             }
-            return Ok(LoadedEntireData().Result);
+
+            var listOfFilm = await LoadedEntireData();
+            return Ok(listOfFilm);
+        }
+
+        /// <summary>
+        /// A version of the film controller with Hyperlinks ressource
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("hyperlinks")]
+        public async Task<ActionResult<IEnumerable<FilmDTO>>> GetFilmsHyperlinked()
+        {
+            if(_context.Films == null)
+                return NotFound();
+
+            var listOfFilm = await LoadedEntireData();
+            var listOfDto = new List<FilmDTO>();
+
+            foreach (var film in listOfFilm)
+            {
+                var dto = new FilmDTO()
+                {
+                    Nom = film.Nom,
+                    Description = film.Description,
+                    DateDeParution = film.DateDeParution
+                };
+
+                AddLinks(dto, film);
+
+                listOfDto.Add(dto);
+            }
+
+            return Ok(listOfDto);
         }
 
         // GET: api/Films/5
@@ -92,6 +125,17 @@ namespace API_Movies.Controllers
             {
                 return BadRequest();
             }
+
+            var oldFilm = _context.Films.FirstOrDefault(f => f.FilmId == id);
+            if (oldFilm == null)
+                return BadRequest("Film non trouvé");
+
+            _context.Entry(oldFilm).State = EntityState.Detached;
+
+            film.Nom = oldFilm.Nom;
+            film.Description = oldFilm.Description;
+            film.DateDeParution = oldFilm.DateDeParution;
+            film.Cast = oldFilm.Cast ?? _context.Casts.Find(film.CastId);
             
             //Allow to do an update command for the object
             _context.Entry(film).State = EntityState.Modified;
@@ -178,6 +222,28 @@ namespace API_Movies.Controllers
                                     .ThenInclude(cast => cast.Realisateur)
                                         .ThenInclude(rea => rea.Personne)
                                  .ToListAsync();
+        }
+
+        /// <summary>
+        /// Allow to add hyperlinks for the acteurs and directors ressources
+        /// </summary>
+        /// <param name="film"></param>
+        private void AddLinks(FilmDTO dto, Film film)
+        {
+            if(film != null)
+            {
+                dto.Hyperlinks.Add(new Hyperlink()
+                {
+                    Relation = "Acteurs",
+                    Href = $"http://localhost:5206/api/Acteurs/{film.Cast.ActeurId}"
+                });
+
+                dto.Hyperlinks.Add(new Hyperlink()
+                {
+                    Relation = "Realisateurs",
+                    Href = $"http://localhost:5206/api/Realisateurs/{film.Cast.RealisateurId}"
+                });
+            }
         }
     }
 }

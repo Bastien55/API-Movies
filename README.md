@@ -22,3 +22,8 @@ Puis vous pouvez tester l'API
 # 3. Base de donnée
 
 Un fichier SQL est intégré au projet afin de construire plus facilement les tables
+
+# 4. Version Hyperlinks
+
+Pour vérifier les liens hyperlinks il faut aller sur la section api/Films/hyperlinks et copier les liens dans le navigateur pour avoir le
+code JSON correspondant a la ressource.
