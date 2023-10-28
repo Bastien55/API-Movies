@@ -2,8 +2,7 @@ using API_Movies.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using API_Movies;
-using API_Movies.Repository.Interface;
-using API_Movies.Repository;
+using API_Movies.Models;
 
 internal class Program
 {
