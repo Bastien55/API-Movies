@@ -6,24 +6,25 @@ Pour profiter au mieux de ce projet il faut :
 
 # 1. Build l'application
 
-Il faut se mettre dans le répertoire du projet et faire : docker-compose up
-Cela va créer : 
-- la base de donnée MariaDB sur le port 3306
+Il faut se mettre dans le rÃ©pertoire du projet et faire : docker-compose up
+Cela va crÃ©er : 
+- la base de donnÃ©e MariaDB sur le port 3306
 - L'interface PhpMyAdmin sur le port 8080
 - L'API sur le port 5206
 
 # 2. Tester l'application
 
-Une fois l'environnement build il faut ouvrir le navigateur et allé a cette adresse :
+Une fois l'environnement build il faut ouvrir le navigateur et allÃ© a cette adresse :
 http://localhost:5206/swagger/index.html
 
 Puis vous pouvez tester l'API
 
-# 3. Base de donnée
+# 3. Base de donnÃ©e
 
-Un fichier SQL est intégré au projet afin de construire plus facilement les tables
+Dans votre SGBD il faudra crÃ©e la base de donnÃ©e API-Movie puis importer le fichier API-Movie.sql
+Un fichier SQL est intÃ©grÃ© au projet afin de construire plus facilement les tables
 
 # 4. Version Hyperlinks
 
-Pour vérifier les liens hyperlinks il faut aller sur la section api/Films/hyperlinks et copier les liens dans le navigateur pour avoir le
+Pour vÃ©rifier les liens hyperlinks il faut aller sur la section api/Films/hyperlinks et copier les liens dans le navigateur pour avoir le
 code JSON correspondant a la ressource.
